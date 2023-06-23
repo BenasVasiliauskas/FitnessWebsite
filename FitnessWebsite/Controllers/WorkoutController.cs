@@ -42,7 +42,7 @@ namespace FitnessWebsite.Controllers
         }
 
         [Authorize(Roles = "User")]
-        [HttpPut]
+        [HttpPut("workouts")]
         public async Task<IActionResult> UpdateWorkout(WorkoutPostDto request, int id)
         {
             await _workoutService.UpdateAsync(id, User.FindFirst("userId").Value, request);
