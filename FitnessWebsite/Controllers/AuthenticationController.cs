@@ -25,11 +25,18 @@ namespace FitnessWebsite.Controllers
             return Ok(request);
         }
 
-        [HttpPost("Login")]
+        [HttpPost("login")]
         public async Task<IActionResult> LoginUser(LoginUserDto request)
         {
             var response = await _authenticationService.LoginAsync(request);
             return Ok(response);
+        }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken(Token token)
+        {
+            var newToken = _tokenService.RefreshToken(token);
+            return Ok(newToken);
         }
 
     }

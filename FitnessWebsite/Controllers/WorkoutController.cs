@@ -46,7 +46,7 @@ namespace FitnessWebsite.Controllers
         public async Task<IActionResult> UpdateWorkout(WorkoutPostDto request, int id)
         {
             await _workoutService.UpdateAsync(id, User.FindFirst("userId").Value, request);
-            return Ok();
+            return NoContent();
         }
 
         [Authorize(Roles = "User")]
