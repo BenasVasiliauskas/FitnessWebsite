@@ -9,6 +9,7 @@ using FitnessWebsite.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using FitnessWebsite.Services;
 
 namespace AdAstra.DataAccess.Extensions
 {
@@ -57,4 +58,4 @@ namespace AdAstra.DataAccess.Extensions
         }
     }
 }
-}
+

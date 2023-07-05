@@ -8,6 +8,6 @@ namespace FitnessWebsite.Interfaces
         Task DeleteAsync(int id, string userId);
         Task<List<WorkoutViewDto>> GetAllAsync();
         Task<WorkoutViewDto> GetByIdAsync(int id);
-        Task UpdateAsync(int tripId, string userId, WorkoutPostDto workoutDto);
+        Task UpdateAsync(int workoutId, string userId, WorkoutPostDto workoutDto);
     }
 }
