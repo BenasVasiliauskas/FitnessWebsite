@@ -11,6 +11,7 @@
         public int AmountOfReps { get; set; }
 
         public string Description { get; set; }
+        public Workout Workout { get; set; }
 
         public List<Comment> Comments { get; set; }
     }
