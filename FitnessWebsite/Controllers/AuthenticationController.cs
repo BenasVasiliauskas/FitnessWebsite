@@ -35,7 +35,7 @@ namespace FitnessWebsite.Controllers
         [HttpPost("refresh-token")]
         public async Task<IActionResult> RefreshToken(Token token)
         {
-            var newToken = _tokenService.RefreshToken(token);
+            var newToken = await _tokenService.RefreshToken(token);
             return Ok(newToken);
         }
 

@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using FitnessWebsite.Services;
+using Microsoft.Extensions.Hosting;
 
 namespace AdAstra.DataAccess.Extensions
 {
@@ -46,15 +47,25 @@ namespace AdAstra.DataAccess.Extensions
                 };
             });
         }
-
         public static void ConfigureDependencyInjection(this IServiceCollection services)
         {
             services.AddTransient<IAuthService, AuthService>();
+
             services.AddTransient<IWorkoutService, WorkoutService>();
             services.AddTransient<IExerciseService, ExerciseService>();
             services.AddTransient<ICommentService, CommentService>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddScoped<ApplicationDbSeeder>();
+        }
+
+        public static void ConfigureDataAccess(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB; Initial Catalog=FitnessWebsiteDatabase"));
+
+            services.AddTransient<IBaseRepository<Workout>, WorkoutRepository>();
+            services.AddTransient<IBaseRepository<Exercise>, ExerciseRepository>();
+            services.AddTransient<IBaseRepository<Comment>, CommentRepository>();
         }
     }
 }

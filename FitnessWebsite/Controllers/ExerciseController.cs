@@ -47,7 +47,7 @@ namespace FitnessWebsite.Controllers
         }
 
         [Authorize(Roles = "User")]
-        [HttpPut("workouts/{workoutId}/exercises/{exerciseId}")]
+        [HttpDelete("workouts/{workoutId}/exercises/{exerciseId}")]
         public async Task<IActionResult> DeleteExercise(int workoutId, int exerciseId)
         {
             _exerciseService.DeleteAsync(workoutId, exerciseId, User.FindFirst("userId").Value);

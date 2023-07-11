@@ -11,6 +11,8 @@ namespace FitnessWebsite.Dtos
         [Required]
         public string Username { get; set; }
         [Required]
+        public int Age { get; set; }
+        [Required]
         [EmailAddress]
         public string Email { get; set; }
         [Required]
