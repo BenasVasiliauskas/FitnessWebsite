@@ -22,7 +22,7 @@ namespace FitnessWebsite.Services
 
         public async Task<SuccessfulLoginDto> LoginAsync(LoginUserDto loginUserDto)
         {
-            var user = await _userManager.FindByEmailAsync(loginUserDto.Email);
+            var user = await _userManager.FindByNameAsync(loginUserDto.Username);
 
             if(user == null)
             {

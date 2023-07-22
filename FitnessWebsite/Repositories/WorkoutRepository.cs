@@ -15,10 +15,18 @@ namespace FitnessWebsite.Repositories
 
         public override async Task<Workout> GetByIdAsync(int id)
         {
-            return await _context.Workouts.Include(t => t.Exercises)
-                .ThenInclude(p => p.Comments)
-                .SingleOrDefaultAsync(t => t.Id == id)
-                ?? throw new EntityMissingInDatabaseException("Workout with this id doesn't exist!");
+            var workout = await _context.Workouts
+            .Include(w => w.Exercises)
+            .ThenInclude(e => e.Comments)
+            .SingleOrDefaultAsync(w => w.Id == id);
+
+            // Check if the workout is found, if not return null or some other appropriate result
+            if (workout == null)
+            {
+                throw new EntityMissingInDatabaseException("Workout with this id doesn't exist!"); ; // Or you could return a specific NotFound response
+            }
+
+            return workout;
         }
         public async Task ThrowIfNotFound(int id)
         {

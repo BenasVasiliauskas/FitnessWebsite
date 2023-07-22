@@ -4,7 +4,6 @@ import { Table, Button } from "semantic-ui-react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
-import Modal from "react-modal";
 
 export default function Workouts() {
   const { auth } = useAuth();
@@ -19,9 +18,12 @@ export default function Workouts() {
     });
   }, []);
 
-  const setData = (id, name) => {
+  const setData = (id, name, type, description, userEmail) => {
     localStorage.setItem("ID", id);
     localStorage.setItem("name", name);
+    localStorage.setItem("type", type);
+    localStorage.setItem("description", description);
+    localStorage.setItem("useremail", userEmail);
   };
 
   const getData = () => {
@@ -61,13 +63,16 @@ export default function Workouts() {
     },
   };
   return (
-    <section2>
+    <div>
       <h1>Workouts</h1>
       <br></br>
       <Table celled style={styles.table}>
         <Table.Header style={styles.th}>
           <Table.Row style={styles.th}>
             <Table.HeaderCell style={styles.th}>Name</Table.HeaderCell>
+            <Table.HeaderCell style={styles.th}>Type</Table.HeaderCell>
+            <Table.HeaderCell style={styles.th}>Description</Table.HeaderCell>
+            <Table.HeaderCell style={styles.th}>Email</Table.HeaderCell>
             <Table.HeaderCell style={styles.th}>Exercises</Table.HeaderCell>
             {auth?.roles?.find((role) => allowedRoles?.includes(role)) && (
               <Table.HeaderCell style={styles.th}>Edit</Table.HeaderCell>
@@ -83,6 +88,9 @@ export default function Workouts() {
             return (
               <Table.Row style={styles.td}>
                 <Table.Cell style={styles.td}>{data.name}</Table.Cell>
+                <Table.Cell style={styles.td}>{data.type}</Table.Cell>
+                <Table.Cell style={styles.td}>{data.description}</Table.Cell>
+                <Table.Cell style={styles.td}>{data.userEmail}</Table.Cell>
                 <Table.Cell style={styles.td}>
                   <Link to="/exercises">
                     <Button
@@ -128,6 +136,6 @@ export default function Workouts() {
           </Button>
         </Link>
       )}
-    </section2>
+    </div>
   );
 }

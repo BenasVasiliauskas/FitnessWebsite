@@ -41,7 +41,7 @@ namespace FitnessWebsite.Services
         {
             var workout = await _workoutRepository.GetByIdAsync(workoutId);
 
-            if (workout.ApplicationUserId != user.FindFirst("userId").Value && !user.IsInRole("Moderator"))
+            if (workout.ApplicationUserId != user.FindFirst("userId").Value && !user.IsInRole("Admin"))
             {
                 throw new ForbiddenException("You can only delete your comments");
             }
@@ -86,7 +86,7 @@ namespace FitnessWebsite.Services
         {
             var workout = await _workoutRepository.GetByIdAsync(workoutId);
 
-            if (workout.ApplicationUserId != user.FindFirst("userId").Value && !user.IsInRole("Moderator"))
+            if (workout.ApplicationUserId != user.FindFirst("userId").Value && !user.IsInRole("Admin"))
             {
                 throw new ForbiddenException("You can only update your comments");
             }

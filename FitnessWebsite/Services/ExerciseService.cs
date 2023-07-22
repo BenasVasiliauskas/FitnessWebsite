@@ -4,6 +4,8 @@ using FitnessWebsite.Entities;
 using FitnessWebsite.Exceptions;
 using FitnessWebsite.Interfaces;
 using FitnessWebsite.Repositories;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FitnessWebsite.Services
 {
@@ -20,24 +22,29 @@ namespace FitnessWebsite.Services
             _mapper = mapper;
         }
 
-        public async Task<ExerciseViewDto> AddAsync(int workoutId, string userId, ExercisePostDto exerciseDto)
+        public async Task<ExerciseViewDto> AddAsync(int workoutId, ExercisePostDto exerciseDto, string userId)
         {
           var workout = await _workoutRepository.GetByIdAsync(workoutId);
+
+
             if (workout.ApplicationUserId != userId)
             {
                 throw new ForbiddenException("You can only add exercises to your own workouts!");
             }
+
             var exerciseEntity = _mapper.Map<Exercise>(exerciseDto);
             workout.Exercises.Add(exerciseEntity);
             await _exerciseRepository.AddAsync(exerciseEntity);
 
+            
+
             return _mapper.Map<ExerciseViewDto>(exerciseEntity);
         }
 
-        public async Task DeleteAsync(int workoutId, int exerciseId, string userId)
+        public async Task DeleteAsync(int workoutId, int exerciseId, ClaimsPrincipal user)
         {
             var workout = await _workoutRepository.GetByIdAsync(workoutId);
-            if (workout.ApplicationUserId != userId)
+            if (workout.ApplicationUserId != user.FindFirst("userId").Value && !user.IsInRole("Moderator") && !user.IsInRole("Admin"))
             {
                 throw new ForbiddenException("You can only delete exercises to your own workouts!");
             }
@@ -57,11 +64,23 @@ namespace FitnessWebsite.Services
             }
         }
 
-        public async Task<List<ExerciseViewDto>> GetAllAsync(int exerciseId)
+        public async Task<List<ExerciseViewDto>> GetAllAsync(int workoutId)
         {
-            var exercise = await _exerciseRepository.GetByIdAsync(exerciseId);
+            var exercises = await _exerciseRepository.GetAll()
+               .Include(e => e.Comments)
+               .Where(e => e.Workout.Id == workoutId)
+               .ToListAsync();
+            if (exercises.Count <= 0)
+            {
+                throw new ForbiddenException("No exercises exists for this workout id");
+            }
 
-            return _mapper.Map<List<ExerciseViewDto>>(exercise);
+            var mapped = exercises.Select(t =>
+            {
+                var mapped = _mapper.Map<ExerciseViewDto>(t);
+                return mapped;
+            });
+            return mapped.ToList();
 
         }
 
@@ -75,11 +94,11 @@ namespace FitnessWebsite.Services
             return _mapper.Map<ExerciseViewDto>(exercise);
         }
 
-        public async Task UpdateAsync(int workoutId, int exerciseId, string userId, ExercisePostDto exerciseDto)
+        public async Task UpdateAsync(int workoutId, int exerciseId,ClaimsPrincipal user, ExercisePostDto exerciseDto)
         {
             var workout = await _workoutRepository.GetByIdAsync(workoutId);
 
-            if (workout.ApplicationUserId != userId)
+            if (workout.ApplicationUserId != user.FindFirst("userId").Value && !user.IsInRole("Moderator") && !user.IsInRole("Admin"))
             {
                 throw new ForbiddenException("You can only update exercises to your own workouts!");
             }

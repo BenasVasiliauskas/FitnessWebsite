@@ -5,7 +5,7 @@ import decode from "jwt-decode";
 //import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import axios from "../api/axios";
 import React from "react";
-const LOGIN_URL = "/login";
+const LOGIN_URL = "/authentication/login";
 
 const Login = () => {
   const { setAuth } = useAuth();

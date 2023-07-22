@@ -1,7 +1,9 @@
 ﻿using FitnessWebsite.Dtos;
+using FitnessWebsite.Entities;
 using FitnessWebsite.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace FitnessWebsite.Controllers
 {
@@ -17,9 +19,9 @@ namespace FitnessWebsite.Controllers
         }
 
         [HttpGet("workouts/{workoutId}/exercises")]
-        public async Task<IActionResult> GetAllExercises(int exerciseId)
+        public async Task<IActionResult> GetAllExercises(int workoutId)
         {
-            var exercises = await _exerciseService.GetAllAsync(exerciseId);
+            var exercises = await _exerciseService.GetAllAsync(workoutId);
             return Ok(exercises);
         }
         [HttpGet("workouts/{workoutId}/exercises/{exerciseId}")]
@@ -29,28 +31,29 @@ namespace FitnessWebsite.Controllers
             return Ok(exercise);
         }
 
-        [Authorize(Roles = "User")]
-        [HttpPost("workouts/{workoutId}/exercises/{exerciseId}")]
+        [Authorize(Roles = "User,Admin")]
+        [HttpPost("workouts/{workoutId}/exercises")]
         public async Task<IActionResult> AddExercise(int workoutId, ExercisePostDto request)
         {
-            var exercise = await _exerciseService.AddAsync(workoutId, User.FindFirst("userId").Value, request);
+            var exercise = await _exerciseService.AddAsync(workoutId, request, User.FindFirst("userId").Value);
+           
             return CreatedAtAction(nameof(GetExerciseById), new { workoutId, exerciseId = exercise.Id}, exercise);
 
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         [HttpPut("workouts/{workoutId}/exercises/{exerciseId}")]
         public async Task<IActionResult> UpdateExercise(int workoutId, int exerciseId, ExercisePostDto request)
         {
-            await _exerciseService.UpdateAsync(workoutId, exerciseId, User.FindFirst("userId").Value, request);
+            await _exerciseService.UpdateAsync(workoutId, exerciseId, User, request);
             return NoContent();
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         [HttpDelete("workouts/{workoutId}/exercises/{exerciseId}")]
         public async Task<IActionResult> DeleteExercise(int workoutId, int exerciseId)
         {
-            _exerciseService.DeleteAsync(workoutId, exerciseId, User.FindFirst("userId").Value);
+            _exerciseService.DeleteAsync(workoutId, exerciseId, User);
             return NoContent();
         }
     }

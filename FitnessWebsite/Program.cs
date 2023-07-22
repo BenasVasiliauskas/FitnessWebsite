@@ -20,7 +20,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
 {
-builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+builder.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
 }));
 
 builder.Services.AddSwaggerGen(c =>
@@ -55,6 +55,12 @@ builder.Services.AddSwaggerGen(c =>
         });
 });
 
+builder.Services.AddLogging(config =>
+{
+    config.AddConsole();
+    config.AddDebug();
+});
+
 var app = builder.Build();
 
 await SeedData();
@@ -64,7 +70,6 @@ app.UseSwaggerUI();
 
 
 app.UseHttpsRedirection();
-
 app.UseCors("corsapp");
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();

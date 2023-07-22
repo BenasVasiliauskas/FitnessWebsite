@@ -4,6 +4,7 @@ using FitnessWebsite.Entities;
 using FitnessWebsite.Exceptions;
 using FitnessWebsite.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace FitnessWebsite.Services
 {
@@ -28,11 +29,12 @@ namespace FitnessWebsite.Services
 
         }
 
-        public async Task DeleteAsync(int id, string userId)
+        public async Task DeleteAsync(int id, string userId, ClaimsPrincipal user)
         {
             var workout = await _workoutRepository.GetByIdAsync(id);
 
-            if (workout.ApplicationUserId != userId)
+
+            if (workout.ApplicationUserId != userId && !user.IsInRole("Admin"))
             {
                 throw new ForbiddenException("You can only delete your own workouts!");
             }
@@ -57,7 +59,6 @@ namespace FitnessWebsite.Services
             var mapped = workouts.Select(t =>
             {
                 var mapped = _mapper.Map<WorkoutViewDto>(t);
-                mapped.UserEmail = t.ApplicationUser.Email;
                 return mapped;
             });
             return mapped.ToList();
@@ -69,11 +70,11 @@ namespace FitnessWebsite.Services
             return _mapper.Map<WorkoutViewDto>(workout);
         }
 
-        public async Task UpdateAsync(int workoutId, string userId, WorkoutPostDto workoutDto)
+        public async Task UpdateAsync(int workoutId, string userId, WorkoutPostDto workoutDto, ClaimsPrincipal user)
         {
             var workout = await _workoutRepository.GetByIdAsync(workoutId);
 
-            if (workout.ApplicationUserId != userId)
+            if (workout.ApplicationUserId != userId && !user.IsInRole("Admin"))
             {
                 throw new ForbiddenException("You can only update your own workouts!");
             }

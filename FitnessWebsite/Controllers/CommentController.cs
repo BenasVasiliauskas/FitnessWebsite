@@ -31,7 +31,7 @@ namespace FitnessWebsite.Controllers
             return Ok(comment);
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         [HttpPost("workouts/{workoutId}/exercises/{exerciseId}/comments")]
         public async Task<IActionResult> AddComment(int workoutId, int exerciseId, CommentPostDto request)
         {
@@ -39,7 +39,7 @@ namespace FitnessWebsite.Controllers
             return CreatedAtAction(nameof(GetCommentById), new { workoutId, exerciseId, commentId = comment.Id }, comment);
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         [HttpPut("workouts/{workoutId}/exercises/{exerciseId}/comments/{commentId}")]
         public async Task<IActionResult> UpdateComments (int workoutId, int exerciseId, int commentId, CommentPostDto request)
         {
@@ -47,7 +47,7 @@ namespace FitnessWebsite.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User,Admin")]
         [HttpDelete("workouts/{workoutId}/exercises/{exerciseId}/comments/{commentId}")]
         public async Task<IActionResult> DeleteComment(int workoutId, int exerciseId, int commentId)
         {
