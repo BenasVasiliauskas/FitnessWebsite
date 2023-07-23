@@ -53,7 +53,7 @@ namespace FitnessWebsite.Controllers
         [HttpDelete("workouts/{workoutId}/exercises/{exerciseId}")]
         public async Task<IActionResult> DeleteExercise(int workoutId, int exerciseId)
         {
-            _exerciseService.DeleteAsync(workoutId, exerciseId, User);
+            await _exerciseService.DeleteAsync(workoutId, exerciseId, User);
             return NoContent();
         }
     }

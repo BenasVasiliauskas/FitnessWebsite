@@ -12,7 +12,7 @@ export default function Exercises() {
   const [exerciseData, setExerciseData] = useState([]);
   const [exerciseID, setExerciseID] = useState([]);
   const [workoutsName, setWorkoutName] = useState("");
-  const allowedRoles = ["SimpleUser", "Admin", ""];
+  const allowedRoles = ["Admin"];
   useEffect(() => {
     setWorkoutID(localStorage.getItem("ID"));
     setWorkoutName(localStorage.getItem("name"));
@@ -24,15 +24,28 @@ export default function Exercises() {
       });
   }, []);
 
-  const setData = (id) => {
+  const setData = (
+    id,
+    name,
+    description,
+    amountOfReps,
+    amountOfSets,
+    category
+  ) => {
     localStorage.setItem("exerciseID", id);
+    localStorage.setItem("name", name);
+    localStorage.setItem("description", description);
+    localStorage.setItem("amountOfReps", amountOfReps);
+    localStorage.setItem("amountOfSets", amountOfSets);
+    localStorage.setItem("category", category);
   };
+  const isAdmin = allowedRoles.includes(auth.roles);
 
   const getData = () => {
     axiosPrivate
       .get("/workouts/" + `${localStorage.getItem("ID")}` + "/exercises")
+
       .then((getData) => {
-        console.log(getData.data);
         setExerciseData(getData.data);
       });
   };
@@ -75,7 +88,20 @@ export default function Exercises() {
       <Table celled style={styles.table}>
         <Table.Header>
           <Table.Row>
-            <Table.HeaderCell style={styles.th}>Name</Table.HeaderCell>
+            {isAdmin && (
+              <Table.HeaderCell style={styles.th}>Id</Table.HeaderCell>
+            )}
+            <Table.HeaderCell style={styles.th}>
+              Name of exercise
+            </Table.HeaderCell>
+            <Table.HeaderCell style={styles.th}>Description</Table.HeaderCell>
+            <Table.HeaderCell style={styles.th}>
+              Amount of reps
+            </Table.HeaderCell>
+            <Table.HeaderCell style={styles.th}>
+              Amount of sets
+            </Table.HeaderCell>
+            <Table.HeaderCell style={styles.th}>Category</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
@@ -83,7 +109,14 @@ export default function Exercises() {
           {exerciseData.map((data) => {
             return (
               <Table.Row>
+                {isAdmin && (
+                  <Table.Cell style={styles.td}>{data.id}</Table.Cell>
+                )}
                 <Table.Cell style={styles.td}>{data.name}</Table.Cell>
+                <Table.Cell style={styles.td}>{data.description}</Table.Cell>
+                <Table.Cell style={styles.td}>{data.amountOfReps}</Table.Cell>
+                <Table.Cell style={styles.td}>{data.amountOfSets}</Table.Cell>
+                <Table.Cell style={styles.td}>{data.category}</Table.Cell>
                 <Table.Cell style={styles.tr}>
                   <Link to="detailed">
                     <Button
@@ -100,14 +133,14 @@ export default function Exercises() {
         </Table.Body>
       </Table>
       <br></br>
-      {auth?.roles?.find((role) => allowedRoles?.includes(role)) && (
+      {isAdmin && (
         <Link to="add">
           <Button style={{ backgroundColor: "green", color: "#fff" }}>
             Create Exercise
           </Button>
         </Link>
       )}
-      <Link to={"/"}>
+      <Link to={"/workouts"}>
         <Button style={{ backgroundColor: "#A9A9A9", color: "#fff" }}>
           Back
         </Button>

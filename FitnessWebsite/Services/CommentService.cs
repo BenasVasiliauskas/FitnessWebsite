@@ -3,6 +3,7 @@ using FitnessWebsite.Dtos;
 using FitnessWebsite.Entities;
 using FitnessWebsite.Exceptions;
 using FitnessWebsite.Interfaces;
+using System.Globalization;
 using System.Security.Claims;
 
 namespace FitnessWebsite.Services
@@ -29,7 +30,12 @@ namespace FitnessWebsite.Services
                 ?? throw new ForbiddenException("Exercise with such an id doesnt exist");
 
             var commentEntity = _mapper.Map<Comment>(commentDto);
-            commentEntity.CreatedDate = DateTime.UtcNow;
+
+            string dateString = DateTime.UtcNow.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
+            string format = "yyyy-MM-dd HH:mm"; // Specify the long date format
+            DateTime createdDate = DateTime.ParseExact(dateString, format, CultureInfo.CurrentCulture);
+
+            commentEntity.CreatedDate = createdDate;
             exercise.Comments.Add(commentEntity);
             await _commentRepository.AddAsync(commentEntity);
 
@@ -98,7 +104,11 @@ namespace FitnessWebsite.Services
             var comment = exercise.Comments.SingleOrDefault(c => c.Id == commentId)
                 ?? throw new ForbiddenException("Comment with such an id doesnt exist");
 
-            comment.UpdatedDate = DateTime.Now;
+            string dateString = DateTime.UtcNow.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
+            string format = "yyyy-MM-dd HH:mm"; // Specify the long date format
+            DateTime updatedDate = DateTime.ParseExact(dateString, format, CultureInfo.CurrentCulture);
+
+            comment.UpdatedDate= updatedDate;
             comment.Body = commentDto.Body;
 
             await _commentRepository.UpdateAsync(comment);

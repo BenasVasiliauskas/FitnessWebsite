@@ -15,18 +15,32 @@ import React from "react";
 import { AiFillHome } from "react-icons/ai";
 import { FiLogIn } from "react-icons/fi";
 import Workouts from "./components/Workouts/Workouts";
-
+import EditWorkouts from "./components/Workouts/EditWorkout";
+import AddWorkout from "./components/Workouts/AddWorkout";
+import Exercises from "./components/Exercises/Exercises";
+import AddExercise from "./components/Exercises/AddExercise";
+import EditExercise from "./components/Exercises/EditExercise";
+import DetailedExercise from "./components/Exercises/DetailedExercise";
+import Comments from "./components/Comments/Comments";
+import CommentsAdd from "./components/Comments/CommentsAdd";
+import CommentDetailed from "./components/Comments/CommentDetailed";
+import CommentEdit from "./components/Comments/CommentEdit";
+import RequireAuth from "./components/RequireAuth";
+import useAuth from "./hooks/useAuth";
 const ROLES = {
-  SimpleUser: "SimpleUser",
+  User: "User",
   Admin: "Admin",
 };
 const { Header, Content, Footer } = Layout;
+
+const userRole = ROLES.Admin;
 
 const App = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const navigate = useNavigate();
+  const { auth } = useAuth();
   return (
     <Layout
       className="layout"
@@ -40,13 +54,31 @@ const App = () => {
           <AiFillHome />
           <span>Home</span>
         </Link>
+
+        <Link
+          to="/workouts"
+          style={{ paddingLeft: 20, color: "#ffffff", fontSize: 30 }}
+        >
+          <span>Workouts</span>
+        </Link>
         <Link
           to="/login"
-          style={{ float: "right", color: "#ffffff", fontSize: 30 }}
+          style={{ paddingLeft: 20, color: "#ffffff", fontSize: 30 }}
         >
           <span>Login</span>
           <FiLogIn />
         </Link>
+
+        <span
+          style={{
+            float: "right",
+            paddingLeft: 20,
+            color: "#c7c7c7",
+            fontSize: 15,
+          }}
+        >
+          Welcome {auth.user}! Your role is {auth.roles}
+        </span>
       </Header>
       <Content
         style={{
@@ -69,27 +101,29 @@ const App = () => {
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
               <Route path="unauthorized" element={<Unauthorized />} />
-              <Route path="workouts" element={<Workouts />} />
-              {/* <Route path="exercises" element={<Exercises />} />
-              <Route path="exercises/detailed" element={<ExerciseDetailed />} />
 
-              <Route path="comments" element={<Questions />} />
-              <Route path="comments/detailed" element={<QuestionDetailed />} />
-              <Route path="comments/add" element={<AddQuestion />} /> */}
+              <Route path="workouts" element={<Workouts />} />
+              <Route path="workouts/edit" element={<EditWorkouts />} />
+              <Route path="workouts/add" element={<AddWorkout />} />
+
+              <Route path="exercises" element={<Exercises />} />
+              <Route path="exercises/edit" element={<EditExercise />} />
+              <Route path="exercises/add" element={<AddExercise />} />
+              <Route path="exercises/detailed" element={<DetailedExercise />} />
+
+              <Route path="comments" element={<Comments />} />
+              <Route path="comments/add" element={<CommentsAdd />} />
+              <Route path="comments/detailed" element={<CommentDetailed />} />
+              <Route path="comments/edit" element={<CommentEdit />} />
+
+              <Route
+                element={<RequireAuth allowedRoles={[ROLES.SimpleUser]} />}
+              ></Route>
               {/* Home */}
             </Route>
           </Routes>
         </div>
       </Content>
-      <Footer
-        className="fixed-bottom"
-        style={{
-          textAlign: "center",
-        }}
-      >
-        ©2023 Created by Benas Vasiliauskas
-        <img style={{ maxWidth: "250px" }} />
-      </Footer>
     </Layout>
   );
 };

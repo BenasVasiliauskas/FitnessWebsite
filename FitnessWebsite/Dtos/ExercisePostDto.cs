@@ -12,5 +12,10 @@ namespace FitnessWebsite.Dtos
         public int AmountOfReps { get; set; }
         [Required]
         public int AmountOfSets { get; set; }
+        public string ImageUrl { get; set; }
+
+        public string VideoUrl { get; set; }
+        [Required]
+        public string Category { get; set; }
     }
 }

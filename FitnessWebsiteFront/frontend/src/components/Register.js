@@ -6,8 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "../api/axios";
-import { Link, Navigate, useNavigate } from "react-router-dom";
-import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const USER_REGEX = /^[A-z][A-z0-9]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[.,!@#$%]).{8,24}$/;
@@ -27,6 +26,12 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [validEmail, setValidEmail] = useState(false);
   const [emailFocus, setEmailFocus] = useState(false);
+
+  const [firstName, setFirstName] = useState("");
+  const [firstNameFocus, setFirstNameFocus] = useState(false);
+
+  const [lastName, setLastName] = useState("");
+  const [lastNameFocus, setLastNameFocus] = useState(false);
 
   const [pwd, setPwd] = useState("");
   const [validPwd, setValidPwd] = useState(false);
@@ -60,7 +65,7 @@ const Register = () => {
     setErrMsg("");
   }, [user, email, pwd, matchPwd]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async () => {
     // if button enabled with JS hack
     const v1 = USER_REGEX.test(user);
     const v2 = EMAIL_REGEX.test(email);
@@ -73,7 +78,13 @@ const Register = () => {
     try {
       const response = await axios.post(
         REGISTER_URL,
-        JSON.stringify({ userName: user, email, password: pwd }),
+        JSON.stringify({
+          userName: user,
+          email,
+          password: pwd,
+          firstName: firstName,
+          lastName: lastName,
+        }),
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
@@ -112,8 +123,57 @@ const Register = () => {
         {errMsg}
       </p>
       <h1>Register</h1>
-      <br></br>
       <form onSubmit={handleSubmit}>
+        <FontAwesomeIcon icon={faInfoCircle} /> Must consist of letters. Numbers
+        not allowed.
+        <br></br>
+        <label style={{ fontSize: 20 }} htmlFor="firstName">
+          First Name:{" "}
+        </label>
+        <br></br>
+        <input
+          type="text"
+          id="firstName"
+          ref={userRef}
+          autoComplete="off"
+          onChange={(e) => setFirstName(e.target.value)}
+          value={firstName}
+          required
+          onFocus={() => setFirstNameFocus(true)}
+          onBlur={() => setFirstNameFocus(false)}
+        />
+        <p
+          style={{ fontSize: 15 }}
+          id="firstNameNote"
+          className={firstNameFocus && firstName ? "instructions" : "offscreen"}
+        ></p>
+        <FontAwesomeIcon icon={faInfoCircle} /> Must consist of letters. Numbers
+        not allowed.
+        <br></br>
+        <label style={{ fontSize: 20 }} htmlFor="lastName">
+          Last Name:{" "}
+        </label>
+        <br></br>
+        <input
+          type="text"
+          id="lastName"
+          ref={userRef}
+          autoComplete="off"
+          onChange={(e) => setLastName(e.target.value)}
+          value={lastName}
+          required
+          onFocus={() => setLastNameFocus(true)}
+          onBlur={() => setLastNameFocus(false)}
+        />
+        <p
+          style={{ fontSize: 15 }}
+          id="firstNameNote"
+          className={firstNameFocus && firstName ? "instructions" : "offscreen"}
+        ></p>
+        <FontAwesomeIcon icon={faInfoCircle} /> 4 to 24 characters.
+        <br />
+        Must begin with a letter. Letters, numbers allowed.
+        <br></br>
         <label style={{ fontSize: 20 }} htmlFor="username">
           Username:{" "}
           <FontAwesomeIcon
@@ -146,15 +206,11 @@ const Register = () => {
           className={
             userFocus && user && !validName ? "instructions" : "offscreen"
           }
-        >
-          <FontAwesomeIcon icon={faInfoCircle} /> 4 to 24 characters.
-          <br />
-          Must begin with a letter.
-          <br />
-          Letters, numbers allowed.
-        </p>
+        ></p>
         <br></br>
-
+        <FontAwesomeIcon icon={faInfoCircle} /> Must consist words separated by
+        @.
+        <br></br>
         <label style={{ fontSize: 20 }} htmlFor="email">
           Email:{" "}
           <FontAwesomeIcon
@@ -180,19 +236,18 @@ const Register = () => {
           onFocus={() => setEmailFocus(true)}
           onBlur={() => setEmailFocus(false)}
         />
-        <br></br>
         <p
           style={{ fontSize: 15 }}
           id="emailnote"
           className={
             emailFocus && email && !validEmail ? "instructions" : "offscreen"
           }
-        >
-          <FontAwesomeIcon icon={faInfoCircle} /> Must consist words separated
-          by @.
-          <br />
-        </p>
+        ></p>
         <br></br>
+        <FontAwesomeIcon icon={faInfoCircle} /> 8 to 24 characters.
+        <br />
+        Must include uppercase and lowercase letters, a number and a special
+        character. Allowed special characters: . , ! @ # $ %<br></br>
         <label style={{ fontSize: 20 }} htmlFor="password">
           Password:{" "}
           <FontAwesomeIcon
@@ -221,16 +276,11 @@ const Register = () => {
           style={{ fontSize: 15 }}
           id="pwdnote"
           className={pwdFocus && !validPwd ? "instructions" : "offscreen"}
-        >
-          <FontAwesomeIcon icon={faInfoCircle} /> 8 to 24 characters.
-          <br />
-          Must include uppercase and lowercase letters, a number and a special
-          character.
-          <br />
-          Allowed special characters: . , ! @ # $ %
-        </p>
+        ></p>
         <br></br>
-
+        <FontAwesomeIcon icon={faInfoCircle} /> Must match the first password
+        input field.
+        <br></br>
         <label style={{ fontSize: 20 }} htmlFor="confirm_pwd">
           Confirm Password:{" "}
           <FontAwesomeIcon
@@ -254,15 +304,11 @@ const Register = () => {
           onFocus={() => setMatchFocus(true)}
           onBlur={() => setMatchFocus(false)}
         />
-        <br></br>
         <p
           style={{ fontSize: 15 }}
           id="confirmnote"
           className={matchFocus && !validMatch ? "instructions" : "offscreen"}
-        >
-          <FontAwesomeIcon icon={faInfoCircle} /> Must match the first password
-          input field.
-        </p>
+        ></p>
         <br></br>
         <button
           type="button"

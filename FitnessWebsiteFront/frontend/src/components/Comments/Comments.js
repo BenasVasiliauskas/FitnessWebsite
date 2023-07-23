@@ -11,12 +11,13 @@ export default function Comments() {
   const [commentsData, setCommentsData] = useState([]);
   const [workoutID, setWorkoutID] = useState(null);
   const [exerciseID, setExerciseID] = useState(null);
-  const [workoutName, setWorkoutName] = useState("");
-  const allowedRoles = ["Admin", ""];
+  const [exerciseName, setExerciseName] = useState();
+  const allowedRoles = ["Admin"];
+  const excName = localStorage.getItem("exerciseName");
   useEffect(() => {
     setWorkoutID(localStorage.getItem("ID"));
     setExerciseID(localStorage.getItem("exerciseID"));
-    setWorkoutName(localStorage.getItem("name"));
+    setExerciseName(localStorage.getItem("exerciseName"));
     axiosPrivate
       .get(
         "/workouts/" +
@@ -33,6 +34,8 @@ export default function Comments() {
   const setData = (data) => {
     localStorage.setItem("commentID", data.id);
     localStorage.setItem("commentBody", data.body);
+    localStorage.setItem("createdDate", data.createdDate);
+    localStorage.setItem("updatedDate", data.updatedDate);
   };
 
   const getData = () => {
@@ -45,7 +48,6 @@ export default function Comments() {
           "/comments"
       )
       .then((getData) => {
-        console.log(getData.data);
         setCommentsData(getData.data);
       });
   };
@@ -74,7 +76,7 @@ export default function Comments() {
   };
   return (
     <div>
-      <h1> {workoutName} Exercise's comments</h1>
+      <h1>{excName} Exercise's comments</h1>
       <br></br>
       <Table celled style={styles.table}>
         <Table.Header>
@@ -89,6 +91,7 @@ export default function Comments() {
               <Table.Row>
                 <Table.Cell style={styles.td}>{data.id}</Table.Cell>
                 <Table.Cell style={styles.td}>{data.body}</Table.Cell>
+
                 <Table.Cell style={styles.tr}>
                   <Link to="detailed">
                     <Button
@@ -110,7 +113,7 @@ export default function Comments() {
           Create comment
         </Button>
       </Link>
-      <Link to={"/exercises/detailed"}>
+      <Link to={-1}>
         <Button style={{ backgroundColor: "red", color: "#fff" }}>Back</Button>
       </Link>
     </div>

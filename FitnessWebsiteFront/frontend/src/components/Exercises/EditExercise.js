@@ -2,14 +2,19 @@ import React, { useState, useEffect } from "react";
 import { Form, Button } from "semantic-ui-react";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { Link, useNavigate } from "react-router-dom";
-
-export default function EditAd() {
+import "../ValidButton.css";
+export default function EditExercise() {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const [name, setName] = useState("");
-  const [repAmount, setReps] = useState("");
+  const [description, setDescription] = useState("");
+  const [amountOfReps, setReps] = useState("");
   const [amountOfSets, setSets] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [category, setCategory] = useState("");
   const [exerciseID, setID] = useState(null);
+
   const sendDataToAPI = () => {
     axiosPrivate
       .put(
@@ -19,20 +24,39 @@ export default function EditAd() {
           `${localStorage.getItem("exerciseID")}`,
         {
           name,
-          repAmount,
+          description,
+          amountOfReps,
           amountOfSets,
+          imageUrl,
+          videoUrl,
+          category,
         }
       )
       .then(() => {
         navigate("/exercises/detailed");
       });
   };
+  const isFormValid = () => {
+    return (
+      name.trim() !== "" &&
+      description.trim() !== "" &&
+      amountOfReps.trim() !== "" &&
+      amountOfSets.trim() !== "" &&
+      imageUrl.trim() !== "" &&
+      videoUrl.trim() !== "" &&
+      category.trim() !== ""
+    );
+  };
 
   useEffect(() => {
-    setName(localStorage.getItem("exerciseName"));
-    setReps(localStorage.getItem("repAmount"));
-    setSets(localStorage.getItem("amountOfSets"));
     setID(localStorage.getItem("exerciseID"));
+    setName(localStorage.getItem("exerciseName"));
+    setDescription(localStorage.getItem("description"));
+    setReps(localStorage.getItem("amountOfReps"));
+    setSets(localStorage.getItem("amountOfSets"));
+    setVideoUrl(localStorage.getItem("videoUrl"));
+    setImageUrl(localStorage.getItem("imageUrl"));
+    setCategory(localStorage.getItem("category"));
   }, []);
 
   return (
@@ -54,14 +78,27 @@ export default function EditAd() {
           />
         </Form.Field>
         <Form.Field>
+          <label>Exercise description</label>
+          <br></br>
+          <input
+            name="fdesc"
+            type="text"
+            autoComplete="off"
+            required
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Exercise description"
+          />
+        </Form.Field>
+        <Form.Field>
           <label>Rep amount</label>
           <br></br>
           <input
-            name="lname"
+            name="frep"
             type="number"
             autoComplete="off"
             required
-            value={repAmount}
+            value={amountOfReps}
             placeholder="Rep amount"
             onChange={(e) => setReps(e.target.value)}
           />
@@ -73,16 +110,57 @@ export default function EditAd() {
             type="number"
             autoComplete="off"
             required
-            name="fprice"
+            name="fset"
             value={amountOfSets}
             onChange={(e) => setSets(e.target.value)}
             placeholder="Amount of sets"
           />
         </Form.Field>
+        <Form.Field>
+          <label>Video url</label>
+          <br></br>
+          <input
+            name="fvid"
+            type="text"
+            autoComplete="off"
+            required
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
+            placeholder="Video url"
+          />
+        </Form.Field>
+        <Form.Field>
+          <label>Image url</label>
+          <br></br>
+          <input
+            name="fimage"
+            type="text"
+            autoComplete="off"
+            required
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            placeholder="Image url"
+          />
+        </Form.Field>
+        <Form.Field>
+          <label>Category</label>
+          <br></br>
+          <input
+            name="fcategory"
+            type="text"
+            autoComplete="off"
+            required
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            placeholder="Category"
+          />
+        </Form.Field>
         <Button
-          style={{ backgroundColor: "green", color: "#fff" }}
+          style={{ color: "#fff" }}
           type="submit"
           onClick={sendDataToAPI}
+          className={isFormValid() ? "submitButton" : "invalidButton"}
+          disabled={!isFormValid()}
         >
           Edit
         </Button>

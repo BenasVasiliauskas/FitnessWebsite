@@ -61,18 +61,18 @@ namespace FitnessWebsite.Controllers
         }
 
         [Authorize(Roles = "User,Admin")]
-        [HttpPut("workouts")]
-        public async Task<IActionResult> UpdateWorkout(WorkoutPostDto request, int id)
+        [HttpPut("workouts/{workoutId}")]
+        public async Task<IActionResult> UpdateWorkout(WorkoutPostDto request, int workoutId)
         {
-            await _workoutService.UpdateAsync(id, User.FindFirst("userId").Value, request, User);
+            await _workoutService.UpdateAsync(workoutId, User.FindFirst("userId").Value, request, User);
             return NoContent();
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpDelete("workouts")]
-        public async Task<IActionResult> DeleteWorkout(int id)
+        [HttpDelete("workouts/{workoutId}")]
+        public async Task<IActionResult> DeleteWorkout(int workoutId)
         {
-            await _workoutService.DeleteAsync(id, User.FindFirst("userId").Value, User);
+            await _workoutService.DeleteAsync(workoutId, User.FindFirst("userId").Value, User);
             return NoContent();
         }
     }

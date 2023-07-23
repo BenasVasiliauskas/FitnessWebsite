@@ -40,15 +40,15 @@ const Login = () => {
         }
       );
 
-      //console.log(JSON.stringify(response));
-      const accessToken = response?.data?.accessToken;
+      const accessToken = response?.data?.token;
       const decoded = decode(accessToken);
+
       if (
         !decoded[
           "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        ] == "SimpleUser"
+        ] == "User"
       ) {
-        const roles = ["SimpleUser", ""];
+        const roles = ["User", ""];
         setAuth({ user, pwd, roles, accessToken });
       } else {
         const roles =
@@ -59,7 +59,7 @@ const Login = () => {
       }
       setUser("");
       setPwd("");
-      navigate("/");
+      navigate("/workouts");
     } catch (err) {
       if (!err?.response) {
         setErrMsg("No Server Response");

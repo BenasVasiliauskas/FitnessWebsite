@@ -44,7 +44,7 @@ namespace FitnessWebsite.Services
         public async Task DeleteAsync(int workoutId, int exerciseId, ClaimsPrincipal user)
         {
             var workout = await _workoutRepository.GetByIdAsync(workoutId);
-            if (workout.ApplicationUserId != user.FindFirst("userId").Value && !user.IsInRole("Moderator") && !user.IsInRole("Admin"))
+            if ((workout.ApplicationUserId != user.FindFirst("userId").Value && !user.IsInRole("Moderator")) && !user.IsInRole("Admin"))
             {
                 throw new ForbiddenException("You can only delete exercises to your own workouts!");
             }
@@ -111,6 +111,9 @@ namespace FitnessWebsite.Services
             exercise.AmountOfSets = exerciseDto.AmountOfSets;
             exercise.Description = exerciseDto.Description;
             exercise.Name = exerciseDto.Name;
+            exercise.VideoUrl = exerciseDto.VideoUrl;
+            exercise.ImageUrl = exerciseDto.ImageUrl;
+            exercise.Category = exerciseDto.Category;
 
             await _exerciseRepository.UpdateAsync(exercise);
 

@@ -1,0 +1,15 @@
+.invalidButton {
+  background-color: red;
+}
+
+.invalidButton:hover {
+  background-color: red; /* Keep the background red even when hovering */
+}
+
+.submitButton {
+  background-color: green;
+}
+
+.submitButton:hover {
+  background-color: #008b8b; /* Change the hover background color for the valid state */
+}
