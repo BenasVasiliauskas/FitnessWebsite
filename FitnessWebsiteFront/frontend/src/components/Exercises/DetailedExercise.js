@@ -11,9 +11,12 @@ export default function DetailedExercise() {
   const [exerciseData, setExerciseData] = useState([]);
   const [workoutID, setWorkoutID] = useState(null);
   const [exerciseID, setExerciseID] = useState(null);
+  const [comments, setComments] = useState(null);
+
   const [workoutName, setWorkoutName] = useState("");
   const allowedRoles = ["Admin"];
   useEffect(() => {
+    getComments();
     setWorkoutID(localStorage.getItem("ID"));
     setWorkoutName(localStorage.getItem("name"));
     setExerciseID(localStorage.getItem("exerciseID"));
@@ -39,19 +42,20 @@ export default function DetailedExercise() {
     localStorage.setItem("videoUrl", exerciseData.videoUrl);
     localStorage.setItem("imageUrl", exerciseData.imageUrl);
   };
-
-  const getData = () => {
+  const getComments = () => {
     axiosPrivate
       .get(
         "/workouts/" +
           `${localStorage.getItem("ID")}` +
           "/exercises/" +
-          `${localStorage.getItem("exerciseID")}`
+          `${localStorage.getItem("exerciseID")}` +
+          "/comments"
       )
-      .then((getData) => {
-        setExerciseData(getData.data);
+      .then((response) => {
+        setComments(response.data); // Store the fetched comments in the state
       });
   };
+
   function handleClick(id) {
     if (window.confirm("Are you sure you want to delete this?")) {
       onDelete(id);
@@ -90,6 +94,8 @@ export default function DetailedExercise() {
     },
   };
   const isAdmin = allowedRoles.includes(auth.roles);
+  const shouldRenderDeleteButton = comments === null || comments.length === 0;
+
   return (
     <section2>
       <h1> {workoutName} Exercise details</h1>
@@ -166,12 +172,16 @@ export default function DetailedExercise() {
             )}
             {isAdmin && (
               <Table.Cell style={styles.td}>
-                <Button
-                  style={{ backgroundColor: "red", color: "#fff" }}
-                  onClick={() => handleClick()}
-                >
-                  Delete
-                </Button>
+                {shouldRenderDeleteButton ? (
+                  <Button
+                    style={{ backgroundColor: "red", color: "#fff" }}
+                    onClick={() => handleClick()}
+                  >
+                    Delete
+                  </Button>
+                ) : (
+                  "Comments attached"
+                )}
               </Table.Cell>
             )}
           </Table.Row>
@@ -186,7 +196,7 @@ export default function DetailedExercise() {
           Comments
         </Button>
       </Link>
-      <br></br>
+
       <br></br>
       <Link to={"/exercises"}>
         <Button style={{ backgroundColor: "#a9a9a9", color: "#fff" }}>

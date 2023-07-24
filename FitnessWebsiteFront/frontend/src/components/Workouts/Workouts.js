@@ -14,22 +14,46 @@ export default function Workouts() {
   const [workoutsData, setWorkoutsData] = useState([]);
   const allowedRoles = ["Admin"];
   useEffect(() => {
+    getData();
+    console.log(localStorage);
     axiosPrivate.get(WORKOUTS_URL).then((getData) => {
       setWorkoutsData(getData.data);
     });
   }, []);
+
+  const getData = async () => {
+    try {
+      const response = await axiosPrivate.get(WORKOUTS_URL);
+      const workoutDataWithExercises = await Promise.all(
+        response.data.map(async (workout) => {
+          try {
+            const exerciseResponse = await axiosPrivate.get(
+              `${WORKOUTS_URL}/${workout.id}/exercises`
+            );
+            return {
+              ...workout,
+              exercises: exerciseResponse.data.length > 0 ? true : false,
+            };
+          } catch (error) {
+            console.log(error);
+            return {
+              ...workout,
+              exercises: false,
+            };
+          }
+        })
+      );
+      setWorkoutsData(workoutDataWithExercises);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const setData = (id, name, type, description) => {
     localStorage.setItem("ID", id);
     localStorage.setItem("name", name);
     localStorage.setItem("type", type);
     localStorage.setItem("description", description);
-  };
-
-  const getData = () => {
-    axiosPrivate.get(WORKOUTS_URL).then((getData) => {
-      setWorkoutsData(getData.data);
-    });
   };
 
   function handleClick(id) {
@@ -80,23 +104,27 @@ export default function Workouts() {
                   <Table.Cell>{data.type}</Table.Cell>
                   <Table.Cell>{data.description}</Table.Cell>
 
-                  <Table.Cell>
-                    <Link to="/exercises">
-                      <Button
-                        style={{ backgroundColor: "#A9A9A9", color: "#fff" }}
-                        onClick={() =>
-                          setData(
-                            data.id,
-                            data.name,
-                            data.type,
-                            data.description
-                          )
-                        }
-                      >
-                        Open Exercises
-                      </Button>
-                    </Link>
-                  </Table.Cell>
+                  {data.exercises ? ( // Check if there are exercises
+                    <Table.Cell>
+                      <Link to="/exercises">
+                        <Button
+                          style={{ backgroundColor: "#A9A9A9", color: "#fff" }}
+                          onClick={() =>
+                            setData(
+                              data.id,
+                              data.name,
+                              data.type,
+                              data.description
+                            )
+                          }
+                        >
+                          Open Exercises
+                        </Button>
+                      </Link>
+                    </Table.Cell>
+                  ) : (
+                    <Table.Cell>No Exercises</Table.Cell> // Render an empty cell if there are no exercises
+                  )}
 
                   <Table.Cell>
                     <Link to="/workouts/edit">
@@ -116,14 +144,18 @@ export default function Workouts() {
                     </Link>
                   </Table.Cell>
 
-                  {isAdmin && ( // Only render if user is admin
+                  {isAdmin && (
                     <Table.Cell>
-                      <Button
-                        style={{ backgroundColor: "red", color: "#fff" }}
-                        onClick={() => handleClick(data.id)}
-                      >
-                        Delete
-                      </Button>
+                      {data.exercises ? (
+                        "Exercises Attached"
+                      ) : (
+                        <Button
+                          style={{ backgroundColor: "red", color: "#fff" }}
+                          onClick={() => handleClick(data.id)}
+                        >
+                          Delete
+                        </Button>
+                      )}
                     </Table.Cell>
                   )}
                 </Table.Row>

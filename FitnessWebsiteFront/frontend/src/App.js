@@ -29,6 +29,7 @@ import RequireAuth from "./components/RequireAuth";
 import useAuth from "./hooks/useAuth";
 const ROLES = {
   User: "User",
+  Moderator: "Moderator",
   Admin: "Admin",
 };
 const { Header, Content, Footer } = Layout;
@@ -61,14 +62,15 @@ const App = () => {
         >
           <span>Workouts</span>
         </Link>
-        <Link
-          to="/login"
-          style={{ paddingLeft: 20, color: "#ffffff", fontSize: 30 }}
-        >
-          <span>Login</span>
-          <FiLogIn />
-        </Link>
-
+        {auth.roles == undefined && (
+          <Link
+            to="/login"
+            style={{ paddingLeft: 20, color: "#ffffff", fontSize: 30 }}
+          >
+            <span>Login</span>
+            <FiLogIn />
+          </Link>
+        )}
         <span
           style={{
             float: "right",
@@ -119,7 +121,6 @@ const App = () => {
               <Route
                 element={<RequireAuth allowedRoles={[ROLES.SimpleUser]} />}
               ></Route>
-              {/* Home */}
             </Route>
           </Routes>
         </div>

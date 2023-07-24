@@ -19,6 +19,7 @@ export default function Comments() {
     setExerciseID(localStorage.getItem("exerciseID"));
     setExerciseName(localStorage.getItem("exerciseName"));
     axiosPrivate
+
       .get(
         "/workouts/" +
           `${localStorage.getItem("ID")}` +
@@ -38,19 +39,6 @@ export default function Comments() {
     localStorage.setItem("updatedDate", data.updatedDate);
   };
 
-  const getData = () => {
-    axiosPrivate
-      .get(
-        "/workouts/" +
-          `${localStorage.getItem("ID")}` +
-          "/exercises/" +
-          `${localStorage.getItem("exerciseID")}` +
-          "/comments"
-      )
-      .then((getData) => {
-        setCommentsData(getData.data);
-      });
-  };
   const styles = {
     table: {
       borderCollapse: "collapse",
@@ -113,7 +101,7 @@ export default function Comments() {
           Create comment
         </Button>
       </Link>
-      <Link to={-1}>
+      <Link to="/exercises/detailed">
         <Button style={{ backgroundColor: "red", color: "#fff" }}>Back</Button>
       </Link>
     </div>

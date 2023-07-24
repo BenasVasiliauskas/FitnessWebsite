@@ -31,11 +31,10 @@ namespace FitnessWebsite.Services
 
             var commentEntity = _mapper.Map<Comment>(commentDto);
 
-            string dateString = DateTime.UtcNow.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
-            string format = "yyyy-MM-dd HH:mm"; // Specify the long date format
-            DateTime createdDate = DateTime.ParseExact(dateString, format, CultureInfo.CurrentCulture);
 
-            commentEntity.CreatedDate = createdDate;
+
+            commentEntity.CreatedDate = DateTime.UtcNow.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
+            commentEntity.UpdatedDate = DateTime.UtcNow.ToLocalTime().ToString("yyyy-MM-dd HH:mm");
             exercise.Comments.Add(commentEntity);
             await _commentRepository.AddAsync(commentEntity);
 
@@ -104,11 +103,7 @@ namespace FitnessWebsite.Services
             var comment = exercise.Comments.SingleOrDefault(c => c.Id == commentId)
                 ?? throw new ForbiddenException("Comment with such an id doesnt exist");
 
-            string dateString = DateTime.UtcNow.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
-            string format = "yyyy-MM-dd HH:mm"; // Specify the long date format
-            DateTime updatedDate = DateTime.ParseExact(dateString, format, CultureInfo.CurrentCulture);
-
-            comment.UpdatedDate= updatedDate;
+            comment.UpdatedDate= DateTime.UtcNow.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss");
             comment.Body = commentDto.Body;
 
             await _commentRepository.UpdateAsync(comment);

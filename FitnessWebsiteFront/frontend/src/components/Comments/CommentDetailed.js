@@ -19,8 +19,6 @@ export default function CommentDetailed() {
     setWorkoutID(localStorage.getItem("ID"));
     setExerciseID(localStorage.getItem("exerciseID"));
     setCommentID(localStorage.getItem("commentID"));
-    console.log("this is posted in detailed comment");
-    console.log(localStorage);
 
     axiosPrivate
       .get(
@@ -140,7 +138,7 @@ export default function CommentDetailed() {
         </Table.Body>
       </Table>
       <br></br>
-      <Link to={-1}>
+      <Link to="/comments">
         <Button style={{ backgroundColor: "#a9a9a9", color: "#fff" }}>
           Back
         </Button>
